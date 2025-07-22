@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Personal Sanctuary</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+      /* CSS Reset & Root Variables */
+      :root {
+        --font-primary: "Quicksand", sans-serif;
+        --font-secondary: "Poppins", sans-serif;
+
+        /* Light Mode Palette */
+        --bg-light: #fdf6f7;
+        --surface-light: #ffffff;
+        --primary-light: #ffc2d1;
+        --secondary-light: #bde0fe;
+        --accent-light: #a2d2ff;
+        --text-light: #5c5470;
+        --text-muted-light: #9a9a9a;
+        --shadow-light: rgba(186, 152, 163, 0.15);
+        --border-light: #eeeeee;
+
+        /* Dark Mode Palette */
+        --bg-dark: #2b2d42;
+        --surface-dark: #3a3d57;
+        --primary-dark: #d90429;
+        --secondary-dark: #8d99ae;
+        --accent-dark: #ef233c;
+        --text-dark: #edf2f4;
+        --text-muted-dark: #a9a9a9;
+        --shadow-dark: rgba(0, 0, 0, 0.2);
+        --border-dark: #4a4d6a;
+
+        /* Default Theme */
+        --bg: var(--bg-light);
+        --surface: var(--surface-light);
+        --primary: var(--primary-light);
+        --secondary: var(--secondary-light);
+        --accent: var(--accent-light);
+        --text-color: var(--text-light);
+        --text-muted: var(--text-muted-light);
+        --shadow: var(--shadow-light);
+        --border-color: var(--border-light);
+      }
+
+      .dark-mode {
+        --bg: var(--bg-dark);
+        --surface: var(--surface-dark);
+        --primary: var(--primary-dark);
+        --secondary: var(--secondary-dark);
+        --accent: var(--accent-dark);
+        --text-color: var(--text-dark);
+        --text-muted: var(--text-muted-dark);
+        --shadow: var(--shadow-dark);
+        --border-color: var(--border-dark);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-primary);
+        background-color: var(--bg);
+        color: var(--text-color);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Loading Spinner */
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        transition: opacity 0.5s ease;
+      }
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--border-color);
+        border-top: 5px solid var(--accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Main App Layout */
+      main {
+        padding: 1rem;
+        padding-bottom: 80px; /* Space for bottom nav */
+      }
+      .page-section {
+        display: none;
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      .page-section.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Navigation */
+      nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: var(--surface);
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem 0;
+        box-shadow: 0 -2px 10px var(--shadow);
+        border-top: 1px solid var(--border-color);
+        z-index: 1000;
+      }
+      .nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.7rem;
+        padding: 0.5rem;
+        border-radius: 12px;
+        transition: color 0.3s ease, background-color 0.3s ease;
+        width: 60px;
+      }
+      .nav-link i {
+        font-size: 1.3rem;
+        margin-bottom: 4px;
+      }
+      .nav-link.active {
+        color: var(--accent);
+      }
+      .nav-link:active {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      /* General UI Components */
+      .card {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 20px var(--shadow);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-secondary);
+        font-weight: 600;
+        color: var(--text-color);
+      }
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+      }
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .btn {
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-family: var(--font-secondary);
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+      .btn:active {
+        transform: translateY(0);
+      }
+      .btn-secondary {
+        background-color: var(--secondary);
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background: var(--bg);
+        color: var(--text-color);
+        font-family: var(--font-primary);
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      /* Modal Styles */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        padding: 1rem;
+      }
+      .modal.active {
+        display: flex;
+      }
+      .modal-content {
+        background: var(--surface);
+        padding: 2rem;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 500px;
+        animation: slideUp 0.3s ease-out;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      /* Tooltip */
+      [data-tooltip] {
+        position: relative;
+        cursor: pointer;
+      }
+      [data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 110%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s, visibility 0.2s;
+        z-index: 10;
+      }
+      [data-tooltip]:hover::after {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* Dark Mode Toggle */
+      .theme-switch-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .theme-switch {
+        display: inline-block;
+        height: 24px;
+        position: relative;
+        width: 50px;
+      }
+      .theme-switch input {
+        display: none;
+      }
+      .slider {
+        background-color: #ccc;
+        bottom: 0;
+        cursor: pointer;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        background-color: #fff;
+        bottom: 4px;
+        content: "";
+        height: 16px;
+        left: 4px;
+        position: absolute;
+        transition: 0.4s;
+        width: 16px;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: var(--accent);
+      }
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      /* Specific Section Styles */
+
+      /* Home */
+      #home-welcome-message {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      /* Money Tracker */
+      .money-list-item {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-bottom: 0.5rem;
+        transition: background-color 0.2s;
+      }
+
+      .shopping-checkbox {
+        width: 20px;
+        height: 20px;
+        margin-right: 1rem; 
+        accent-color: var(--accent);
+        cursor: pointer;
+        flex-shrink: 0; /* Prevents the checkbox from shrinking */
+      }
+
+      .money-list-item.purchased {
+        text-decoration: line-through;
+        opacity: 0.6;
+      }
+      .money-list-item-text {
+        flex-grow: 1;
+      }
+      .money-list-item-price {
+        font-weight: 600;
+        margin-right: 1rem;
+      }
+      .money-list-item-actions button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-left: 0.5rem;
+        padding: 5px;
+      }
+      .money-list-item-actions button:hover {
+        color: var(--accent);
+      }
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      .dashboard-item {
+        background: var(--bg);
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+      }
+      .dashboard-item h4 {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .dashboard-item p {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      #shopping-list-container,
+      #wishlist-container {
+        margin-bottom: 1rem; /* Adds space between the list/text and the button below */
+      }
+
+      /* Memories Section */
+      #memories-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .tab-btn {
+        flex: 1;
+        padding: 0.8rem;
+      }
+      #photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+      }
+      .photo-item {
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        border-radius: 12px;
+        aspect-ratio: 1/1;
+      }
+      .photo-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+      .photo-item:hover img {
+        transform: scale(1.1);
+      }
+      .photo-item .fav-icon {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        color: white;
+        font-size: 1.2rem;
+        text-shadow: 0 0 5px black;
+      }
+      .blog-post {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .blog-post h3 {
+        margin-bottom: 0.5rem;
+      }
+      .blog-post-meta {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+      }
+      .blog-post-content {
+        line-height: 1.6;
+      }
+
+      /* Add this new rule to style the card containing the photo upload */
+      #memories-photos-content .card {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* This will center the button and text */
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+
+      /* Add this new rule to style the placeholder text when the gallery is empty */
+      #photo-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        width: 100%;
+        margin-top: 1.5rem; /* Adds space below the upload button */
+      }
+
+      #gallery-empty-message p {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        line-height: 1.6;
+        text-align: center;
+        margin-top: 1.5rem;
+        width: 100%;
+      }
+
+      /* Main footer container for the photo modal */
+      .photo-modal-footer {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: space-between; /* Pushes left and right groups apart */
+        align-items: center;
+        gap: 1rem;
+      }
+
+      /* Container for left-side buttons (Favorite & Delete) */
+      .photo-modal-footer .actions-left {
+        display: flex;
+        gap: 0.75rem; /* Space between Favorite and Delete */
+      }
+
+      /* Make ALL buttons in the modal footer larger and more touch-friendly */
+      .photo-modal-footer .btn {
+        padding: 0.8rem 1.1rem; /* Increased padding for a larger size */
+        font-size: 0.6rem;
+        flex-shrink: 0; /* Prevents buttons from shrinking on small screens */
+      }
+
+      /* AI Section */
+      .ai-card {
+        background: linear-gradient(135deg, var(--secondary), var(--accent));
+        color: white;
+        text-align: center;
+      }
+      .ai-card h3 {
+        color: white;
+      }
+      #ai-suggestion {
+        font-size: 1.2rem;
+        font-style: italic;
+        margin: 1rem 0;
+        min-height: 50px;
+      }
+      .add-item-form .btn {
+        flex-shrink: 0; /* Prevents the button from shrinking */
+        white-space: nowrap; /* Keeps "Add Task" on one line */
+      }
+
+      /* Form for adding items (reusable for to-do list) */
+      .add-item-form {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+      .add-item-form input {
+        flex-grow: 1;
+        margin-bottom: 0;
+      }
+
+      /* --- Mini To-Do List Feature --- */
+
+      /* Form for adding items */
+      .add-item-form {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+      .add-item-form input {
+        flex-grow: 1;
+        margin-bottom: 0;
+      }
+      .add-item-form .btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      /* To-do list item styling */
+      .todo-item {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid var(--border-color);
+        transition: opacity 0.3s ease;
+        position: relative;
+      }
+      .todo-item:last-child {
+        border-bottom: none;
+      }
+      .todo-item.completed {
+        opacity: 0.5;
+      }
+      .todo-item.completed .todo-text {
+        text-decoration: line-through;
+      }
+      .todo-item .todo-checkbox {
+        width: 20px;
+        height: 20px;
+        margin: 0 1rem 0 0;
+        accent-color: var(--accent);
+        cursor: pointer;
+      }
+      .todo-item .todo-text {
+        flex-grow: 1;
+      }
+      .todo-item .delete-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0.5rem;
+      }
+      .todo-item .delete-btn:hover {
+        color: #e63946;
+      }
+
+      /* Sparkle Celebration Animation */
+      .sparkle-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .sparkle-container .sparkle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        opacity: 0;
+      }
+      .todo-item.celebrate .sparkle {
+        animation: sparkle-burst 0.7s ease-out forwards;
+      }
+      .todo-item.celebrate .sparkle:nth-child(2) {
+        animation-delay: 0.1s;
+        left: 80%;
+        top: 30%;
+      }
+      .todo-item.celebrate .sparkle:nth-child(3) {
+        animation-delay: 0.2s;
+        left: 20%;
+        top: 70%;
+      }
+      .todo-item.celebrate .sparkle:nth-child(4) {
+        animation-delay: 0.25s;
+        left: 60%;
+        top: 80%;
+      }
+      .todo-item.celebrate .sparkle:nth-child(5) {
+        animation-delay: 0.3s;
+        left: 90%;
+        top: 10%;
+      }
+
+      @keyframes sparkle-burst {
+        0% {
+          opacity: 1;
+          transform: scale(0.5) translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.2) translateY(-40px);
+        }
+      }
+
+      /* Heart Animation on Like */
+      .heart-animation {
+        animation: heart-beat 0.5s ease-in-out;
+        color: var(--accent);
+      }
+      @keyframes heart-beat {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.4);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* === NEW: Love Animation Styles === */
+      .love-particle {
+        position: absolute;
+        bottom: 20px;
+        user-select: none;
+        animation: float-up 5s ease-out forwards;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      @keyframes float-up {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(0.8) rotate(0deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-250px) scale(1.5) rotate(200deg);
+        }
+      }
+      /* === End of new CSS === */
+    </style>
+  </head>
+  <body>
+    <div id="loader">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="onboarding-modal" class="modal">
+      <div class="modal-content">
+        <h1>Welcome to Your Sanctuary! ✨</h1>
+        <p style="margin: 1rem 0; line-height: 1.5">
+          This is a safe, private space designed just for you. Before we begin,
+          what should we call you?
+        </p>
+        <div class="form-group">
+          <label for="onboarding-name">Your Name</label>
+          <input type="text" id="onboarding-name" placeholder="e.g., Alex" />
+        </div>
+        <button class="btn" id="onboarding-start-btn">Let's Get Started</button>
+      </div>
+    </div>
+
+    <div id="form-modal" class="modal">
+      <div class="modal-content" id="form-modal-content"></div>
+    </div>
+
+    <main>
+      <section id="home" class="page-section active">
+        <div class="card">
+          <h1 id="home-greeting">Hello!</h1>
+          <p id="home-welcome-message">
+            Welcome back to your personal space. We're so happy to see you
+            again. Take a deep breath and relax. 💖
+          </p>
+          <div
+            id="love-container"
+            style="position: relative; margin-top: 1.5rem; text-align: center"
+          >
+            <button id="send-love-btn" class="btn">
+              <i class="fas fa-heart"></i> Send some love
+            </button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Quick Overview</h3>
+          <p>
+            This is your personal sanctuary. You can manage your finances in the
+            <b>Money</b> section, save precious moments in your
+            <b>Memories</b> photo gallery and blog, and get a little boost with
+            the <b>AI</b> Life Simplifier's to-do list and daily affirmations.
+          </p>
+        </div>
+      </section>
+
+      <section id="money" class="page-section">
+        <h2><i class="fas fa-piggy-bank"></i> Money Manager</h2>
+        <div class="card">
+          <h3>Dashboard</h3>
+          <div class="form-group">
+            <label for="budget-input">Your Monthly Budget</label>
+            <input type="number" id="budget-input" placeholder="e.g., 2500" />
+          </div>
+          <div id="expense-dashboard">
+            <canvas id="budget-chart" style="margin-bottom: 1.5rem"></canvas>
+            <div class="dashboard-grid">
+              <div class="dashboard-item">
+                <h4>Budget</h4>
+                <p id="dashboard-budget">$0.00</p>
+              </div>
+              <div class="dashboard-item">
+                <h4>Spent</h4>
+                <p id="dashboard-spent" style="color: var(--accent)">$0.00</p>
+              </div>
+              <div class="dashboard-item">
+                <h4>Remaining</h4>
+                <p id="dashboard-remaining" style="color: #4caf50">$0.00</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Shopping List</h3>
+          <div id="shopping-list-container"></div>
+          <button class="btn" onclick="openAddItemModal('shopping')">
+            <i class="fas fa-plus"></i> Add Item
+          </button>
+        </div>
+        <div class="card">
+        <h3>Wishlist &amp; Transfers</h3>
+        <div id="wishlist-container">
+          </div>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+          <button class="btn" onclick="openAddTransferModal()">
+            <i class="fas fa-paper-plane"></i> Log a Transfer
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="openAddItemModal('wishlist')"
+          >
+            <i class="fas fa-star"></i> Add to Wishlist
+          </button>
+        </div>
+      </section>
+
+      <section id="memories" class="page-section">
+        <h2><i class="fas fa-camera-retro"></i> Memories</h2>
+        <div id="memories-tabs">
+          <button
+            class="btn tab-btn active"
+            onclick="switchMemoriesTab('photos')"
+          >
+            <i class="fas fa-images"></i> Photos
+          </button>
+          <button
+            class="btn btn-secondary tab-btn"
+            onclick="switchMemoriesTab('blog')"
+          >
+            <i class="fas fa-book-open"></i> Blog
+          </button>
+        </div>
+
+        <div id="memories-photos-content">
+          <div class="card">
+            <div class="form-group">
+              <label for="photo-upload-input" class="btn"
+                ><i class="fas fa-upload"></i> Upload a Photo</label
+              >
+              <input
+                type="file"
+                id="photo-upload-input"
+                accept="image/*"
+                style="display: none"
+              />
+            </div>
+            <div id="photo-gallery"></div>
+            <div id="gallery-empty-message" style="display: none">
+              <p>
+                Your gallery is empty. Upload a photo to start collecting
+                memories!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div id="memories-blog-content" style="display: none">
+          <div class="card">
+            <button class="btn" onclick="openNewBlogPostModal()">
+              <i class="fas fa-pen-nib"></i> Write a New Post
+            </button>
+            <div id="blog-posts-container" style="margin-top: 1.5rem"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="ai" class="page-section">
+        <h2><i class="fas fa-magic-wand-sparkles"></i> Life Simplifier</h2>
+        <div class="card ai-card">
+          <h3>Your Daily Sparkle ✨</h3>
+          <p id="ai-suggestion">Click the button for a little dose of joy!</p>
+          <button
+            class="btn"
+            style="background: white; color: var(--accent); margin-top: 1rem"
+            onclick="generateAISuggestion()"
+          >
+            <i class="fas fa-lightbulb"></i> Inspire Me
+          </button>
+        </div>
+        <div class="card">
+          <h3>Mini To-Do List</h3>
+          <p style="margin-bottom: 1.5rem">
+            A simple list for today's little tasks.
+          </p>
+
+          <div id="todo-list-container"></div>
+
+          <form id="add-todo-form" class="add-item-form">
+            <input
+              type="text"
+              id="add-todo-input"
+              placeholder="e.g., Drink a glass of water"
+              required
+            />
+            <button type="submit" class="btn">
+              <i class="fas fa-plus"></i> Add Task
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section id="settings" class="page-section">
+        <h2><i class="fas fa-cog"></i> Settings</h2>
+        <div class="card">
+          <h3>Preferences</h3>
+          <div class="form-group">
+            <label for="username-setting">Your Name</label>
+            <input
+              type="text"
+              id="username-setting"
+              placeholder="Enter your name"
+            />
+            <button class="btn" onclick="updateUsername()">Save Name</button>
+          </div>
+          <hr
+            style="
+              margin: 1.5rem 0;
+              border: none;
+              border-top: 1px solid var(--border-color);
+            "
+          />
+          <div class="theme-switch-wrapper">
+            <span>Light / Dark Mode</span>
+            <label class="theme-switch" for="theme-checkbox">
+              <input type="checkbox" id="theme-checkbox" />
+              <div class="slider"></div>
+            </label>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Data Management</h3>
+          <button class="btn" onclick="exportData()">
+            <i class="fas fa-download"></i> Export Data
+          </button>
+          <label
+            for="import-file-input"
+            class="btn btn-secondary"
+            style="margin-left: 1rem"
+            ><i class="fas fa-upload"></i> Import Data</label
+          >
+          <input
+            type="file"
+            id="import-file-input"
+            accept=".json"
+            style="display: none"
+          />
+          <hr
+            style="
+              margin: 1.5rem 0;
+              border: none;
+              border-top: 1px solid var(--border-color);
+            "
+          />
+          <button
+            class="btn"
+            style="background-color: #e63946"
+            onclick="resetAllData()"
+          >
+            <i class="fas fa-trash-alt"></i> Reset All Data
+          </button>
+          <p
+            style="
+              font-size: 0.8rem;
+              color: var(--text-muted);
+              margin-top: 0.5rem;
+            "
+          >
+            Warning: This will permanently delete everything.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <nav>
+      <a href="#home" class="nav-link active"
+        ><i class="fas fa-heart"></i><span>Home</span></a
+      >
+      <a href="#money" class="nav-link"
+        ><i class="fas fa-wallet"></i><span>Money</span></a
+      >
+      <a href="#memories" class="nav-link"
+        ><i class="fas fa-camera"></i><span>Memories</span></a
+      >
+      <a href="#ai" class="nav-link"
+        ><i class="fas fa-star"></i><span>AI</span></a
+      >
+      <a href="#settings" class="nav-link"
+        ><i class="fas fa-cog"></i><span>Settings</span></a
+      >
+    </nav>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // --- CORE APP STATE & DATA MANAGEMENT ---
+        const APP_DATA_KEY = "yourSanctuaryData";
+        let budgetChart;
+
+        let appData = {
+          settings: {
+            userName: null,
+            theme: "light",
+            onboardingComplete: false,
+          },
+          money: {
+            budget: 0,
+            shoppingList: [], // {id, text, price, link, purchased, date}
+            transfers: [],
+            wishlist: [], // {id, text, price, link, date}
+          },
+          memories: {
+            photos: [], // {id, base64, caption, favorite, date}
+            blogs: [], // {id, title, content, date}
+          },
+          ai: {
+            todos: [],
+          },
+        };
+
+      // === NEW: Helper function to animate numbers counting up ===
+      const animateValue = (element, start, end, duration) => {
+        if (!element) return;
+        let startTimestamp = null;
+        const step = (timestamp) => {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          const currentValue = progress * (end - start) + start;
+          // Format to 2 decimal places and add Rupee symbol
+          element.textContent = `₹${currentValue.toFixed(2)}`;
+          if (progress < 1) {
+            window.requestAnimationFrame(step);
+          } else {
+            // Ensure the final value is exactly correct
+            element.textContent = `₹${end.toFixed(2)}`;
+          }
+        };
+        window.requestAnimationFrame(step);
+      };
+
+        const saveData = () => {
+          try {
+            localStorage.setItem(APP_DATA_KEY, JSON.stringify(appData));
+          } catch (e) {
+            console.error("Error saving data to localStorage", e);
+            alert("Could not save data. Your browser's storage might be full.");
+          }
+        };
+
+        const loadData = () => {
+          const storedData = localStorage.getItem(APP_DATA_KEY);
+          if (storedData) {
+            const loaded = JSON.parse(storedData);
+            appData = {
+              ...appData, // Start with the default structure
+              ...loaded, // Overwrite with loaded data
+              settings: { ...appData.settings, ...(loaded.settings || {}) },
+              money: { ...appData.money, ...(loaded.money || {}) },
+              memories: { ...appData.memories, ...(loaded.memories || {}) },
+              // This line specifically fixes the missing 'ai' object for the to-do list
+              ai: { ...appData.ai, ...(loaded.ai || {}) },
+            };
+          }
+        };
+
+        document
+          .getElementById("add-todo-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            const input = document.getElementById("add-todo-input");
+            const text = input.value.trim();
+            if (text) {
+              appData.ai.todos.push({
+                id: Date.now(),
+                text: text,
+                completed: false,
+              });
+              saveData();
+              renderTodos();
+              input.value = "";
+              input.focus();
+            }
+          });
+
+        // --- INITIALIZATION ---
+        const init = () => {
+          loadData();
+
+          // Set theme
+          if (appData.settings.theme === "dark") {
+            document.body.classList.add("dark-mode");
+            document.getElementById("theme-checkbox").checked = true;
+          }
+
+          // Hide the loader so the user can see the page/modal
+          hideLoader();
+
+          // Onboarding Check
+          if (!appData.settings.onboardingComplete) {
+            document.getElementById("onboarding-modal").classList.add("active");
+          }
+
+          // Initial UI Render
+          updateWelcomeMessage();
+          renderAll();
+          setupEventListeners();
+        };
+
+        const renderAll = () => {
+          renderMoneyTracker();
+          renderMemories();
+          renderTodos();
+          // Other render functions can be called here
+        };
+
+        const hideLoader = () => {
+          const loader = document.getElementById("loader");
+          loader.style.opacity = "0";
+          setTimeout(() => (loader.style.display = "none"), 500);
+        };
+
+        // --- NAVIGATION ---
+        const navLinks = document.querySelectorAll(".nav-link");
+        const pageSections = document.querySelectorAll(".page-section");
+
+        const navigateTo = (hash) => {
+          navLinks.forEach((link) => link.classList.remove("active"));
+          pageSections.forEach((section) => section.classList.remove("active"));
+
+          const targetLink = document.querySelector(
+            `.nav-link[href="${hash}"]`
+          );
+          const targetSection = document.querySelector(hash);
+
+          if (targetLink && targetSection) {
+            targetLink.classList.add("active");
+            targetSection.classList.add("active");
+          }
+        };
+
+        navLinks.forEach((link) => {
+          link.addEventListener("click", (e) => {
+            e.preventDefault();
+            const hash = link.getAttribute("href");
+            navigateTo(hash);
+          });
+        });
+
+        // --- ONBOARDING ---
+        const onboardingStartBtn = document.getElementById(
+          "onboarding-start-btn"
+        );
+        onboardingStartBtn.addEventListener("click", () => {
+          const nameInput = document.getElementById("onboarding-name");
+          const name = nameInput.value.trim();
+          if (name) {
+            appData.settings.userName = name;
+            appData.settings.onboardingComplete = true;
+            saveData();
+            document
+              .getElementById("onboarding-modal")
+              .classList.remove("active");
+            updateWelcomeMessage();
+            document.getElementById("username-setting").value = name;
+            hideLoader();
+          } else {
+            alert("Please enter a name!");
+          }
+        });
+
+        // --- UI UPDATES & RENDERING ---
+        const updateWelcomeMessage = () => {
+          const greeting = document.getElementById("home-greeting");
+          const username = appData.settings.userName;
+          if (username) {
+            greeting.textContent = `Hello, ${username}!`;
+          } else {
+            greeting.textContent = "Hello!";
+          }
+        };
+
+        // --- MODAL MANAGEMENT ---
+        const formModal = document.getElementById("form-modal");
+        const formModalContent = document.getElementById("form-modal-content");
+
+        const openModal = () => formModal.classList.add("active");
+        window.closeModal = () => formModal.classList.remove("active");
+
+        formModal.addEventListener("click", (e) => {
+          if (e.target === formModal) {
+            closeModal();
+          }
+        });
+
+        // --- MONEY TRACKER ---
+        window.openAddItemModal = (type) => {
+          const title =
+            type === "shopping" ? "Add to Shopping List" : "Add to Wishlist";
+          formModalContent.innerHTML = `
+                <h3>${title}</h3>
+                <div class="form-group">
+                    <label for="item-text">Item Name</label>
+                    <input type="text" id="item-text" placeholder="e.g., Coffee Beans">
+                </div>
+                <div class="form-group">
+                    <label for="item-price">Estimated Price</label>
+                    <input type="number" id="item-price" placeholder="e.g., 15">
+                </div>
+                <div class="form-group">
+                    <label for="item-link">Link (Optional)</label>
+                    <input type="text" id="item-link" placeholder="e.g., https://amazon.com/...">
+                </div>
+                <button class="btn" onclick="handleAddItem('${type}')">Add Item</button>
+                <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="closeModal()">Cancel</button>
+            `;
+          openModal();
+        };
+
+        window.handleAddItem = (type) => {
+          const text = document.getElementById("item-text").value.trim();
+          const price =
+            parseFloat(document.getElementById("item-price").value) || 0;
+          const link = document.getElementById("item-link").value.trim();
+
+          if (!text) {
+            alert("Please enter an item name.");
+            return;
+          }
+
+          const newItem = {
+            id: Date.now(),
+            text,
+            price,
+            link,
+            date: new Date().toISOString(),
+          };
+
+          if (type === "shopping") {
+            newItem.purchased = false;
+            appData.money.shoppingList.push(newItem);
+          } else {
+            appData.money.wishlist.push(newItem);
+          }
+
+          saveData();
+          renderMoneyTracker();
+          closeModal();
+        };
+
+        window.togglePurchased = (id) => {
+          const item = appData.money.shoppingList.find((i) => i.id === id);
+          if (item) {
+            item.purchased = !item.purchased;
+            saveData();
+            renderMoneyTracker();
+          }
+        };
+
+        window.deleteMoneyItem = (type, id) => {
+          if (!confirm("Are you sure you want to delete this item?")) return;
+
+          if (type === "shopping") {
+            appData.money.shoppingList = appData.money.shoppingList.filter(
+              (i) => i.id !== id
+            );
+          } else {
+            appData.money.wishlist = appData.money.wishlist.filter(
+              (i) => i.id !== id
+            );
+          }
+          saveData();
+          renderMoneyTracker();
+        };
+
+        // Opens the modal to log a new transfer
+      window.openAddTransferModal = () => {
+        formModalContent.innerHTML = `
+          <h3>Log a Money Transfer</h3>
+          <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-muted);">This will be tracked as an expense in your budget.</p>
+          <div class="form-group">
+            <label for="transfer-person">Person's Name</label>
+            <input type="text" id="transfer-person" placeholder="e.g., John Doe">
+          </div>
+          <div class="form-group">
+            <label for="transfer-amount">Amount (₹)</label>
+            <input type="number" id="transfer-amount" placeholder="e.g., 500">
+          </div>
+          <div class="form-group">
+            <label for="transfer-reason">Reason (Optional)</label>
+            <input type="text" id="transfer-reason" placeholder="e.g., Birthday gift">
+          </div>
+          <button class="btn" onclick="handleAddTransfer()">Log Transfer</button>
+          <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="closeModal()">Cancel</button>
+        `;
+        openModal();
+      };
+
+      // Handles saving the new transfer data
+      window.handleAddTransfer = () => {
+        const personName = document.getElementById("transfer-person").value.trim();
+        const amount = parseFloat(document.getElementById("transfer-amount").value) || 0;
+        const reason = document.getElementById("transfer-reason").value.trim();
+
+        if (!personName || amount <= 0) {
+          alert("Please enter a valid name and amount.");
+          return;
+        }
+
+        const newTransfer = {
+          id: Date.now(),
+          personName,
+          amount,
+          reason,
+          date: new Date().toISOString(),
+        };
+
+        appData.money.transfers.push(newTransfer);
+        saveData();
+        renderMoneyTracker();
+        closeModal();
+      };
+      
+      // Deletes a transfer record
+      window.deleteTransfer = (id) => {
+        if (!confirm("Are you sure you want to delete this transfer record?")) return;
+
+        appData.money.transfers = appData.money.transfers.filter(
+          (t) => t.id !== id
+        );
+        saveData();
+        renderMoneyTracker();
+      };
+
+        const renderMoneyTracker = () => {
+        const shoppingListContainer = document.getElementById(
+          "shopping-list-container"
+        );
+        const wishlistContainer =
+          document.getElementById("wishlist-container");
+        const budgetInput = document.getElementById("budget-input");
+
+        budgetInput.value = appData.money.budget;
+
+        // --- Render Shopping List (no changes here) ---
+        const createItemHTML = (item, type) => {
+          let textClass =
+            type === "shopping" && item.purchased ? "purchased" : "";
+          let checkbox =
+            type === "shopping"
+              ? `<input type="checkbox" class="shopping-checkbox" ${
+                  item.purchased ? "checked" : ""
+                } onchange="togglePurchased(${item.id})">`
+              : "";
+          return `
+            <div class="money-list-item ${textClass}">
+              ${checkbox}
+              <div class="money-list-item-text">
+                ${item.text}
+                ${
+                  item.link
+                    ? `<a href="${item.link}" target="_blank" style="margin-left: 5px; color: var(--accent);"><i class="fas fa-link"></i></a>`
+                    : ""
+                }
+              </div>
+              <div class="money-list-item-price">₹${item.price.toFixed(2)}</div>
+              <div class="money-list-item-actions">
+                  <button onclick="deleteMoneyItem('${type}', ${
+                    item.id
+                  })"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          `;
+        };
+        shoppingListContainer.innerHTML =
+          appData.money.shoppingList.length > 0
+            ? appData.money.shoppingList
+                .map((item) => createItemHTML(item, "shopping"))
+                .join("")
+            : "<p>Your shopping list is empty. Add something you need!</p>";
+
+        // --- NEW: Render Transfers and Wishlist ---
+        let transfersHTML = "<h4>Transfers</h4>";
+        if(appData.money.transfers.length > 0) {
+           transfersHTML += appData.money.transfers.map(t => `
+            <div class="money-list-item">
+              <div class="money-list-item-text">
+                Sent to: <b>${t.personName}</b>
+                ${t.reason ? `<br><small style="color: var(--text-muted);">${t.reason}</small>` : ''}
+              </div>
+              <div class="money-list-item-price">₹${t.amount.toFixed(2)}</div>
+              <div class="money-list-item-actions">
+                  <button onclick="deleteTransfer(${t.id})"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          transfersHTML += "<p style='color: var(--text-muted); font-size: 0.9rem;'>No transfers logged yet.</p>";
+        }
+
+        let wishlistHTML = "<h4 style='margin-top: 1.5rem;'>Wishlist</h4>";
+        wishlistHTML +=
+          appData.money.wishlist.length > 0
+            ? appData.money.wishlist
+                .map((item) => createItemHTML(item, "wishlist"))
+                .join("")
+            : "<p>Your wishlist is empty. Add something you dream of!</p>";
+
+        wishlistContainer.innerHTML = transfersHTML + wishlistHTML;
+        // --- End of new code ---
+
+        updateDashboard();
+      };
+
+        const updateDashboard = () => {
+        const spentOnShopping = appData.money.shoppingList
+          .filter((i) => i.purchased)
+          .reduce((sum, i) => sum + i.price, 0);
+
+        const spentOnTransfers = appData.money.transfers.reduce(
+          (sum, t) => sum + t.amount,
+          0
+        );
+
+        const spent = spentOnShopping + spentOnTransfers;
+        const budget = appData.money.budget;
+        const remaining = budget - spent;
+
+        const dashboardBudgetEl = document.getElementById("dashboard-budget");
+        const dashboardSpentEl = document.getElementById("dashboard-spent");
+        const dashboardRemainingEl = document.getElementById("dashboard-remaining");
+
+        if (dashboardBudgetEl) {
+          // === UPDATED: Use the animator function ===
+          const animationDuration = 1000; // 1 second
+          animateValue(dashboardBudgetEl, 0, budget, animationDuration);
+          animateValue(dashboardSpentEl, 0, spent, animationDuration);
+          animateValue(dashboardRemainingEl, 0, remaining, animationDuration);
+          // === End of update ===
+          
+          dashboardRemainingEl.style.color = remaining < 0 ? "#e63946" : "#4caf50";
+        }
+
+        const ctx = document.getElementById("budget-chart").getContext("2d");
+
+        if (budgetChart) {
+          budgetChart.destroy();
+        }
+
+        if (budget > 0) {
+          document.querySelector(".dashboard-grid").style.display = "grid";
+          budgetChart = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+              labels: ["Spent", "Remaining"],
+              datasets: [
+                {
+                  data: [spent, Math.max(0, remaining)],
+                  backgroundColor: ["var(--accent)", "var(--border-color)"],
+                  borderColor: "var(--surface)",
+                  borderWidth: 4,
+                },
+              ],
+            },
+            options: {
+              // Slower, smoother animation for the chart itself
+              animation: {
+                  duration: 1500,
+                  easing: 'easeOutQuart',
+              },
+              responsive: true,
+              cutout: "70%",
+              plugins: {
+                legend: { display: true, position: "bottom" },
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return `${context.label}: ₹${context.raw.toFixed(2)}`;
+                    },
+                  },
+                },
+              },
+            },
+          });
+        } else {
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          document.querySelector(".dashboard-grid").style.display = "none";
+          ctx.font = "16px var(--font-primary)";
+          ctx.fillStyle = "var(--text-muted)";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            "Set a budget to see your chart!",
+            ctx.canvas.width / 2,
+            ctx.canvas.height / 2
+          );
+        }
+      };
+
+        document
+          .getElementById("budget-input")
+          .addEventListener("change", (e) => {
+            appData.money.budget = parseFloat(e.target.value) || 0;
+            saveData();
+            updateDashboard();
+          });
+
+        // --- MEMORIES SECTION ---
+        window.switchMemoriesTab = (tab) => {
+          const photosContent = document.getElementById(
+            "memories-photos-content"
+          );
+          const blogContent = document.getElementById("memories-blog-content");
+          const tabButtons = document.querySelectorAll(
+            "#memories-tabs .tab-btn"
+          );
+
+          tabButtons.forEach((btn) => {
+            btn.classList.add("btn-secondary");
+            btn.classList.remove("btn");
+          });
+
+          if (tab === "photos") {
+            photosContent.style.display = "block";
+            blogContent.style.display = "none";
+            document
+              .querySelector("#memories-tabs .tab-btn:first-child")
+              .classList.add("btn");
+            document
+              .querySelector("#memories-tabs .tab-btn:first-child")
+              .classList.remove("btn-secondary");
+          } else {
+            photosContent.style.display = "none";
+            blogContent.style.display = "block";
+            document
+              .querySelector("#memories-tabs .tab-btn:last-child")
+              .classList.add("btn");
+            document
+              .querySelector("#memories-tabs .tab-btn:last-child")
+              .classList.remove("btn-secondary");
+          }
+        };
+
+        const photoUploadInput = document.getElementById("photo-upload-input");
+        photoUploadInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              const caption = prompt("Add a caption for your photo:", "");
+              const newPhoto = {
+                id: Date.now(),
+                base64: event.target.result,
+                caption: caption || "",
+                favorite: false,
+                date: new Date().toISOString(),
+              };
+              appData.memories.photos.unshift(newPhoto); // Add to the beginning
+              saveData();
+              renderMemories();
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+        window.openNewBlogPostModal = () => {
+          formModalContent.innerHTML = `
+                <h3>New Blog Post</h3>
+                <div class="form-group">
+                    <label for="blog-title">Title</label>
+                    <input type="text" id="blog-title" placeholder="A wonderful day">
+                </div>
+                <div class="form-group">
+                    <label for="blog-content">Content (supports Markdown)</label>
+                    <textarea id="blog-content" rows="10" placeholder="Today was..."></textarea>
+                </div>
+                <button class="btn" onclick="handleNewBlogPost()">Post</button>
+                 <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="closeModal()">Cancel</button>
+            `;
+          openModal();
+        };
+
+        window.handleNewBlogPost = () => {
+          const title = document.getElementById("blog-title").value.trim();
+          const content = document.getElementById("blog-content").value.trim();
+          if (!title || !content) {
+            alert("Please fill out both title and content.");
+            return;
+          }
+
+          const newPost = {
+            id: Date.now(),
+            title,
+            content,
+            date: new Date().toISOString(),
+          };
+          appData.memories.blogs.unshift(newPost);
+          saveData();
+          renderMemories();
+          closeModal();
+        };
+
+        const renderMemories = () => {
+          // --- Part 1: Handle Photos ---
+          const photoGallery = document.getElementById("photo-gallery");
+          const emptyMessage = document.getElementById("gallery-empty-message");
+
+          if (appData.memories.photos.length > 0) {
+            photoGallery.style.display = "grid"; // Use 'grid' for photos
+            emptyMessage.style.display = "none";
+            photoGallery.innerHTML = appData.memories.photos
+              .map(
+                (photo) => `
+                    <div class="photo-item" onclick="viewPhoto(${photo.id})">
+                        <img src="${photo.base64}" alt="${photo.caption}">
+                        ${
+                          photo.favorite
+                            ? '<i class="fas fa-heart fav-icon"></i>'
+                            : ""
+                        }
+                    </div>
+                `
+              )
+              .join("");
+          } else {
+            photoGallery.style.display = "none"; // Hide the grid when empty
+            emptyMessage.style.display = "block";
+          }
+
+          // --- Part 2: Handle Blog Posts ---
+          const blogPostsContainer = document.getElementById(
+            "blog-posts-container"
+          );
+          blogPostsContainer.innerHTML =
+            appData.memories.blogs.length > 0
+              ? appData.memories.blogs
+                  .map(
+                    (post) => `
+                <div class="blog-post">
+                    <h3>${post.title}</h3>
+                    <div class="blog-post-meta">${new Date(
+                      post.date
+                    ).toLocaleDateString()}</div>
+                    <div class="blog-post-content">${marked.parse(
+                      post.content
+                    )}</div>
+                    <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem; margin-top: 1rem;" onclick="deleteBlogPost(${
+                      post.id
+                    })">Delete</button>
+                </div>
+            `
+                  )
+                  .join("")
+              : "<p>No blog posts yet. Write about your day!</p>";
+        };
+
+        window.viewPhoto = (id) => {
+          const photo = appData.memories.photos.find((p) => p.id === id);
+          if (!photo) return;
+
+          formModalContent.innerHTML = `
+                <img src="${
+                  photo.base64
+                }" style="width:100%; border-radius:12px; margin-bottom: 1rem;">
+                <p>${photo.caption || ""}</p>
+                <div class="photo-modal-footer">
+                    <div class="actions-left">
+                        <button class="btn" onclick="toggleFavoritePhoto(${id}, this)"><i class="fas fa-heart"></i> ${
+            photo.favorite ? "Unfavorite" : "Favorite"
+          }</button>
+                        <button class="btn" style="background-color:#e63946;" onclick="deletePhoto(${id})"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                    <div class="actions-right">
+                        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                    </div>
+                </div>
+            `;
+          openModal();
+        };
+
+        window.toggleFavoritePhoto = (id, btn) => {
+          const photo = appData.memories.photos.find((p) => p.id === id);
+          if (photo) {
+            photo.favorite = !photo.favorite;
+            const icon = btn.querySelector("i");
+            icon.classList.add("heart-animation");
+            setTimeout(() => icon.classList.remove("heart-animation"), 500);
+            saveData();
+            renderMemories();
+            btn.innerHTML = `<i class="fas fa-heart"></i> ${
+              photo.favorite ? "Unfavorite" : "Favorite"
+            }`;
+          }
+        };
+
+        window.deletePhoto = (id) => {
+          if (!confirm("Are you sure you want to delete this photo?")) return;
+          appData.memories.photos = appData.memories.photos.filter(
+            (p) => p.id !== id
+          );
+          saveData();
+          renderMemories();
+          closeModal();
+        };
+
+        window.deleteBlogPost = (id) => {
+          if (!confirm("Are you sure you want to delete this blog post?"))
+            return;
+          appData.memories.blogs = appData.memories.blogs.filter(
+            (b) => b.id !== id
+          );
+          saveData();
+          renderMemories();
+        };
+
+        // --- AI SECTION ---
+        const aiSuggestions = {
+          affirmations: [
+            "You are capable of amazing things.",
+            "You are loved and appreciated.",
+            "Your positivity is a beacon of light.",
+            "Today is a new opportunity for joy.",
+            "You deserve all the happiness in the world.",
+          ],
+          kindness: [
+            "Leave a positive comment on a friend's social media post.",
+            "Smile at a stranger.",
+            "Send a 'thinking of you' text.",
+            "Tidy up a small common area.",
+            "Offer to help someone with a small task.",
+          ],
+          selfCare: [
+            "Take 5 minutes to just breathe deeply.",
+            "Stretch your body for a few moments.",
+            "Listen to your favorite calming song.",
+            "Drink a glass of water.",
+            "Think of one thing you're grateful for.",
+          ],
+        };
+
+        const renderTodos = () => {
+          const container = document.getElementById("todo-list-container");
+          if (!appData.ai.todos || appData.ai.todos.length === 0) {
+            container.innerHTML = `<p style="padding: 1rem 0; color: var(--text-muted); text-align: center;">No tasks for today. Add one! ✨</p>`;
+            return;
+          }
+
+          container.innerHTML = appData.ai.todos
+            .map(
+              (todo) => `
+                <div class="todo-item ${
+                  todo.completed ? "completed" : ""
+                }" data-todo-id="${todo.id}">
+                    <div class="sparkle-container">
+                        <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+                        <div class="sparkle"></div><div class="sparkle"></div>
+                    </div>
+                    <input type="checkbox" class="todo-checkbox" onchange="toggleTodo(${
+                      todo.id
+                    })" ${todo.completed ? "checked" : ""}>
+                    <span class="todo-text">${todo.text}</span>
+                    <button class="delete-btn" onclick="deleteTodo(${
+                      todo.id
+                    })"><i class="fas fa-trash"></i></button>
+                </div>
+            `
+            )
+            .join("");
+        };
+
+        const playLoveAnimation = () => {
+          const container = document.getElementById("love-container");
+          const name = appData.settings.userName || "Friend";
+          const nameParticles = name.split("");
+          const hearts = [
+            "❤️",
+            "🧡",
+            "💛",
+            "💚",
+            "💙",
+            "💜",
+            "🤎",
+            "🖤",
+            "🤍",
+            "🥰",
+            "💖",
+            "✨",
+            "👨‍👩‍👧‍👦",
+            "👩‍👩‍👧‍👦",
+            "👨‍👨‍👧‍👦",
+          ];
+          // Create a pool of characters with more hearts than letters
+          const particlesPool = [
+            ...nameParticles,
+            ...hearts,
+            ...hearts,
+            ...hearts,
+          ];
+          const particleCount = 30; // How many particles to sprinkle
+
+          for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement("span");
+            particle.classList.add("love-particle");
+
+            // Randomly pick a character from the pool
+            particle.textContent =
+              particlesPool[Math.floor(Math.random() * particlesPool.length)];
+
+            // Random horizontal position and size
+            particle.style.left = `${Math.random() * 95}%`;
+            particle.style.fontSize = `${Math.random() * 1.2 + 1}rem`; // 1rem to 2.2rem
+
+            // Random animation delay and duration for a more organic feel
+            particle.style.animationDelay = `${Math.random() * 2}s`;
+            particle.style.animationDuration = `${Math.random() * 2 + 3}s`; // 3s to 5s
+
+            // Give the user's name a random color
+            if (nameParticles.includes(particle.textContent)) {
+              particle.style.color = `hsl(${Math.random() * 360}, 90%, 70%)`;
+              particle.style.fontWeight = "bold";
+            }
+
+            container.appendChild(particle);
+
+            // Clean up the DOM by removing the particle after the animation is over
+            setTimeout(() => {
+              particle.remove();
+            }, 5000); // 5 seconds is longer than the max animation duration
+          }
+        };
+
+        window.toggleTodo = (id) => {
+          const todo = appData.ai.todos.find((t) => t.id === id);
+          if (todo) {
+            todo.completed = !todo.completed;
+
+            if (todo.completed) {
+              const todoElement = document.querySelector(
+                `[data-todo-id="${id}"]`
+              );
+              if (todoElement) {
+                todoElement.classList.add("celebrate");
+                setTimeout(() => {
+                  todoElement.classList.remove("celebrate");
+                }, 700);
+              }
+            }
+            saveData();
+            renderTodos();
+          }
+        };
+
+        window.deleteTodo = (id) => {
+          appData.ai.todos = appData.ai.todos.filter((t) => t.id !== id);
+          saveData();
+          renderTodos();
+        };
+
+        window.generateAISuggestion = () => {
+          const suggestionTypes = Object.keys(aiSuggestions);
+          const randomType =
+            suggestionTypes[Math.floor(Math.random() * suggestionTypes.length)];
+          const suggestions = aiSuggestions[randomType];
+          const randomSuggestion =
+            suggestions[Math.floor(Math.random() * suggestions.length)];
+
+          document.getElementById("ai-suggestion").textContent =
+            randomSuggestion;
+        };
+
+        // --- SETTINGS SECTION ---
+        window.updateUsername = () => {
+          const newName = document
+            .getElementById("username-setting")
+            .value.trim();
+          if (newName) {
+            appData.settings.userName = newName;
+            saveData();
+            updateWelcomeMessage();
+            alert("Name updated!");
+          }
+        };
+
+        const themeCheckbox = document.getElementById("theme-checkbox");
+        themeCheckbox.addEventListener("change", () => {
+          if (themeCheckbox.checked) {
+            document.body.classList.add("dark-mode");
+            appData.settings.theme = "dark";
+          } else {
+            document.body.classList.remove("dark-mode");
+            appData.settings.theme = "light";
+          }
+          saveData();
+          updateDashboard(); // Redraw chart with new theme colors
+        });
+
+        window.exportData = () => {
+          const dataStr = JSON.stringify(appData, null, 2);
+          const dataBlob = new Blob([dataStr], { type: "application/json" });
+          const url = URL.createObjectURL(dataBlob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `sanctuary-backup-${
+            new Date().toISOString().split("T")[0]
+          }.json`;
+          link.click();
+          URL.revokeObjectURL(url);
+        };
+
+        const importFileInput = document.getElementById("import-file-input");
+        importFileInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          if (
+            !confirm(
+              "Importing data will overwrite everything currently saved. Are you sure you want to continue?"
+            )
+          ) {
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              const importedData = JSON.parse(event.target.result);
+              // Basic validation
+              if (
+                importedData.settings &&
+                importedData.money &&
+                importedData.memories
+              ) {
+                appData = importedData;
+                saveData();
+                alert("Data imported successfully! The page will now reload.");
+                location.reload();
+              } else {
+                throw new Error("Invalid file format.");
+              }
+            } catch (err) {
+              alert(
+                "Error importing data. The file may be corrupt or in the wrong format."
+              );
+              console.error(err);
+            }
+          };
+          reader.readAsText(file);
+        });
+
+        window.resetAllData = () => {
+          if (
+            confirm(
+              "ARE YOU ABSOLUTELY SURE? This will delete all your data permanently and cannot be undone."
+            )
+          ) {
+            localStorage.removeItem(APP_DATA_KEY);
+            alert("All data has been reset. The page will now reload.");
+            location.reload();
+          }
+        };
+
+        // --- EVENT LISTENERS SETUP ---
+        const setupEventListeners = () => {
+          document.getElementById("username-setting").value =
+            appData.settings.userName || "";
+
+          document
+            .getElementById("send-love-btn")
+            .addEventListener("click", playLoveAnimation);
+        };
+
+        // Let's go!
+        init();
+      });
+    </script>
+  </body>
+</html>
